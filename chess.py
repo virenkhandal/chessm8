@@ -5,14 +5,8 @@ import pytz
 import dateutil
 from dateutil import parser
 
-currentYear = datetime.now().year
-currentMonth = str(datetime.now().month).zfill(2)
-date_format='%m/%d/%Y'
-
-
 endpoint = "https://api.chess.com/pub/player/"
 
-dates = {}
 win = ['win']
 loss = ['checkmated', 'timeout', 'resigned', 'threecheck']
 draw = ['stalemate', 'timevsinsufficient', 'insufficient', 'repetition', 'agreed']
@@ -25,6 +19,10 @@ def test_username(username):
         return True
 
 def get_win_stats(username):
+    dates = {}
+    currentYear = datetime.now().year
+    currentMonth = str(datetime.now().month).zfill(2)
+    date_format='%m/%d/%Y'
     response = requests.get(endpoint + username + "/games/" + str(currentYear) + "/" + str(currentMonth))
     for i in response.json().get("games"):
         game = i.get("pgn")
