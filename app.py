@@ -31,5 +31,8 @@ def lichess():
         else:
             return render_template('error.html')
 
+# @app.route('/user')
+
+
 if __name__ == '__main__':
     app.run()
