@@ -16,5 +16,8 @@ def homepage():
     if request.method == "GET":
         return render_template('index.html')
 
+# @app.route('/user')
+
+
 if __name__ == '__main__':
     app.run()
