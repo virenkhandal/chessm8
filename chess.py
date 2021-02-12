@@ -17,6 +17,13 @@ win = ['win']
 loss = ['checkmated', 'timeout', 'resigned', 'threecheck']
 draw = ['stalemate', 'timevsinsufficient', 'insufficient', 'repetition', 'agreed']
 
+def test_username(username):
+    response = requests.get(endpoint + username)
+    if not response:
+        return False
+    else:
+        return True
+
 def get_win_stats(username):
     response = requests.get(endpoint + username + "/games/" + str(currentYear) + "/" + str(currentMonth))
     for i in response.json().get("games"):
