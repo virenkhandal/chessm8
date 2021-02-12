@@ -7,7 +7,7 @@ app = Flask(__name__)
 def homepage():
     return render_template('index.html')
         
-@app.route('/chesscom', methods=['GET','POST'])
+@app.route('/chess', methods=['GET','POST'])
 def chessdotcom():
     if request.method == "POST":
         player = request.form['player']
