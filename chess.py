@@ -1,7 +1,6 @@
 from datetime import datetime
 import requests
 from pytz import timezone
-import pytz
 import dateutil
 from dateutil import parser
 
