@@ -3,6 +3,7 @@ import requests
 from pytz import timezone
 import dateutil
 from dateutil import parser
+import jinja2
 
 endpoint = "https://api.chess.com/pub/player/"
 
@@ -23,7 +24,11 @@ def get_win_stats(username):
     currentMonth = str(datetime.now().month).zfill(2)
     date_format='%m/%d/%Y'
     response = requests.get(endpoint + username + "/games/" + str(currentYear) + "/" + str(currentMonth))
-    for i in response.json().get("games"):
+    games = response.json().get("games")
+    games = games[::-1]
+    # print(games)
+    # games = games.reverse()
+    for i in games:
         game = i.get("pgn")
         if game:
             #date stuff
@@ -84,12 +89,13 @@ def get_win_stats(username):
 def ret_nice(dates):
     ret = []
     for date_played, arr in dates.items():
-        ret.append("Stats for {0}:".format(date_played))
-        ret.append("Total games played: {}".format(arr['total']))
-        ret.append("Wins: {}".format(arr['W']))
-        ret.append("Losses: {}".format(arr['L']))
-        ret.append("Draws: {}".format(arr['D']))
-        ret.append("======")
+        ret.append(
+            ("Stats for {0}:".format(date_played), 
+            "Total games played: {}".format(arr['total']), 
+            "Wins: {}".format(arr['W']), 
+            "Losses: {}".format(arr['L']), 
+            "Draws: {}".format(arr['D']))
+        )
     return ret
 
 def get_title(username):

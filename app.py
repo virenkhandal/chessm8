@@ -15,6 +15,7 @@ def chessdotcom():
             win_stats = chess.ret_nice(chess.get_win_stats(player))
             ratings = chess.get_ratings(player)
             title = chess.get_title(player)
+            # print(win_stats)
             return render_template('result.html', player=player, title=title, ratings_arr=ratings, winstats=win_stats)
         else:
             return render_template('error.html')
@@ -37,4 +38,4 @@ def lichess():
 if __name__ == '__main__':
     import os  
     port = int(os.environ.get('PORT', 33507)) 
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
