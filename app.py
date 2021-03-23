@@ -26,7 +26,7 @@ def chessdotcom():
             return render_template('error.html')
 
 @app.route('/lichess', methods=['GET','POST'])
-def lichess():
+def lichessdotorg():
     if request.method == "POST":
         player = request.form['player']
         if lichess.test_username(player):
