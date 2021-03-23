@@ -182,11 +182,12 @@ def get_ratings_chart(username, time_control):
     print(time_control, dates, '\n')
     return dates
 
-def chartify(data):
+def chartify(data, time_ctrl):
     x = data.keys()
     y = data.values()
     fig = plt.figure()
     plt.plot(x, y)
+    plt.title(time_ctrl)
     plt.xlabel('Date')
     plt.ylabel('Rating')
     chart = mpld3.fig_to_html(fig)
@@ -194,4 +195,5 @@ def chartify(data):
 
 if __name__ == "__main__":
     blitz = get_ratings_chart('boejohn', 'blitz')
-    chartify(blitz)
+    print(blitz)
+#    chartify(blitz)
