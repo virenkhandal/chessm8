@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request
 import chess
 import lichess
+import matplotlib
+matplotlib.use('Agg')
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -15,8 +17,11 @@ def chessdotcom():
             win_stats = chess.ret_nice(chess.get_win_stats(player))
             ratings = chess.get_ratings(player)
             title = chess.get_title(player)
-            # print(win_stats)
-            return render_template('result.html', player=player, title=title, ratings_arr=ratings, winstats=win_stats)
+            bullet_chart = chess.chartify(chess.get_ratings_chart(player, 'bullet'))
+            blitz_chart = chess.chartify(chess.get_ratings_chart(player, 'blitz'))
+            rapid_chart = chess.chartify(chess.get_ratings_chart(player, 'rapid'))
+            charts = [bullet_chart, blitz_chart, rapid_chart]
+            return render_template('result.html', player=player, title=title, ratings_arr=ratings, winstats=win_stats, charts=charts)
         else:
             return render_template('error.html')
 

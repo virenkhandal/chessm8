@@ -3,7 +3,7 @@ import requests
 from pytz import timezone
 import dateutil
 from dateutil import parser
-import jinja2
+import matplotlib.pyplot as plt, mpld3
 
 endpoint = "https://api.chess.com/pub/player/"
 
@@ -121,5 +121,77 @@ def get_ratings(username):
         ret.append("Rapid rating (10 min+): {}".format(rapid_rating))
     return ret
 
+def get_ratings_chart(username, time_control):
+    dates = {}
+    currentYear = datetime.now().year
+    currentMonth = str(datetime.now().month).zfill(2)
+    date_format='%m/%d/%Y'
+    response = requests.get(endpoint + username + "/games/" + str(currentYear) + "/" + str(currentMonth))
+    games = response.json().get("games")
+    # print(games)
+    for i in range(0, len(games)):
+        game = games[i].get("pgn")
+        if game:
+            #date stuff
+            date = game.splitlines()[2][7:17]
+            time = game.splitlines()[12][10:18]
+            date = date.replace('.', '/')
 
-# print("Wins/Losses/Draws for {} {}".format(get_title(username), username))
+            try:
+                # normal games
+                date_time_str = date + " " + time + " UTC"
+                utc_timestamp = parser.parse(date_time_str)
+            except dateutil.parser._parser.ParserError:
+                try:
+                    # weird 'setup' game
+                    new_time = game.splitlines()[14][10:18]
+                    date_time_str = date + " " + new_time + " UTC"
+                    utc_timestamp = parser.parse(date_time_str)
+                except dateutil.parser._parser.ParserError:
+                    try:
+                        # tournament game
+                        new_time = game.splitlines()[13][10:18]
+                        date_time_str = date + " " + new_time + " UTC"
+                        utc_timestamp = parser.parse(date_time_str)
+                    except dateutil.parser._parser.ParserError:
+                        # chess960 game
+                        new_time = game.splitlines()[15][10:18]
+                        date_time_str = date + " " + new_time + " UTC"
+                        utc_timestamp = parser.parse(date_time_str)
+
+            pacific = utc_timestamp.astimezone(timezone('US/Pacific'))
+            date_played = pacific.strftime(date_format)[0:5]
+            if games[i].get('time_class') == time_control:
+                # print(games[i].get('time_class'), '\n')
+                if not date_played in dates:
+                    dates[date_played] = 0
+                    white = games[i].get('white')
+                    black = games[i].get('black')
+
+                    if white.get('username') == username:
+                        dates[date_played] = white.get('rating')
+                        # print(games[i], '\n')
+                    else:
+                        dates[date_played] = black.get('rating')
+                        # print(games[i], '\n')
+    rating_response = requests.get(endpoint + username + "/stats").json()
+    current_rating = rating_response.get("chess_"+ time_control)
+    today = datetime.now().strftime(date_format)[0:5]
+    if current_rating:
+        dates[today] = current_rating.get("last").get("rating")
+    print(time_control, dates, '\n')
+    return dates
+
+def chartify(data):
+    x = data.keys()
+    y = data.values()
+    fig = plt.figure()
+    plt.plot(x, y)
+    plt.xlabel('Date')
+    plt.ylabel('Rating')
+    chart = mpld3.fig_to_html(fig)
+    return chart
+
+if __name__ == "__main__":
+    blitz = get_ratings_chart('boejohn', 'blitz')
+    chartify(blitz)
