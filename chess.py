@@ -91,7 +91,7 @@ def ret_nice(dates):
     for date_played, arr in dates.items():
         ret.append(
             ("Stats for {0}:".format(date_played), 
-            "Total games played: {}".format(arr['total']), 
+            "Played: {}".format(arr['total']), 
             "Wins: {}".format(arr['W']), 
             "Losses: {}".format(arr['L']), 
             "Draws: {}".format(arr['D']))
