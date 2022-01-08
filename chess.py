@@ -30,6 +30,7 @@ def get_win_stats(username):
     # games = games.reverse()
     for i in games:
         game = i.get("pgn")
+        print("\n\n game: ", game, "\n\n")
         if game:
             #date stuff
             date = game.splitlines()[2][7:17]
@@ -53,10 +54,20 @@ def get_win_stats(username):
                         date_time_str = date + " " + new_time + " UTC"
                         utc_timestamp = parser.parse(date_time_str)
                     except dateutil.parser._parser.ParserError:
-                        # chess960 game
-                        new_time = game.splitlines()[15][10:18]
-                        date_time_str = date + " " + new_time + " UTC"
-                        utc_timestamp = parser.parse(date_time_str)
+                        try:
+                            # chess960 game
+                            new_time = game.splitlines()[15][10:18]
+                            date_time_str = date + " " + new_time + " UTC"
+                            utc_timestamp = parser.parse(date_time_str)
+                        except dateutil.parser._parser.ParserError:
+                            try:
+                                new_time = game.splitlines()[16][10:18]
+                                date_time_str = date + " " + new_time + " UTC"
+                                utc_timestamp = parser.parse(date_time_str)
+                            except dateutil.parser._parser.ParserError:
+                                new_time = game.splitlines()[11][10:18]
+                                date_time_str = date + " " + new_time + " UTC"
+                                utc_timestamp = parser.parse(date_time_str)
 
             pacific = utc_timestamp.astimezone(timezone('US/Pacific'))
             date_played = pacific.strftime(date_format)
@@ -154,10 +165,20 @@ def get_ratings_chart(username, time_control):
                         date_time_str = date + " " + new_time + " UTC"
                         utc_timestamp = parser.parse(date_time_str)
                     except dateutil.parser._parser.ParserError:
-                        # chess960 game
-                        new_time = game.splitlines()[15][10:18]
-                        date_time_str = date + " " + new_time + " UTC"
-                        utc_timestamp = parser.parse(date_time_str)
+                        try:
+                            # chess960 game
+                            new_time = game.splitlines()[15][10:18]
+                            date_time_str = date + " " + new_time + " UTC"
+                            utc_timestamp = parser.parse(date_time_str)
+                        except dateutil.parser._parser.ParserError:
+                            try:
+                                new_time = game.splitlines()[16][10:18]
+                                date_time_str = date + " " + new_time + " UTC"
+                                utc_timestamp = parser.parse(date_time_str)
+                            except dateutil.parser._parser.ParserError:
+                                new_time = game.splitlines()[11][10:18]
+                                date_time_str = date + " " + new_time + " UTC"
+                                utc_timestamp = parser.parse(date_time_str)
 
             pacific = utc_timestamp.astimezone(timezone('US/Pacific'))
             date_played = pacific.strftime(date_format)[0:5]
